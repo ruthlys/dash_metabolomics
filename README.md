@@ -2,6 +2,9 @@
 
 ![](dash_metabolomics.gif)
 
+![](dash_metabolomics_1.png)
+
+
 This is a repo to demonstrate how to build a Dash app in R for metabolomics data. It is under development and therefore not yet deployed on a server. This app in particular makes use of common packages for metabolomics analysis including `metaboAnalystR`, `heatmaply`.
 
 ## Running an app
