@@ -18,27 +18,27 @@ library(colorspace)
 
 # # load normalized data for VOC analysis 
 # library(data.table)
-# mset = data.frame(fread("/Users/ruthschmidt/Dropbox/Work/INRS/Data/NI_experiment/Files/VOC/data_normalized.csv", header=T))
+# mset <- data.frame(fread("/Users/ruthschmidt/Dropbox/Work/INRS/Data/NI_experiment/Files/VOC/data_normalized.csv", header=T))
 # head(mset)
 # # convert values to log10 
 # row.names(mset)=mset[,1]
-# mset = mset[,-1]
+# mset <- mset[,-1]
 # # transpose 
-# mset = as.data.frame(t(mset))
-# mset = mset[order(rownames(mset)),]
+# mset <- as.data.frame(t(mset))
+# mset <- mset[order(rownames(mset)),]
 # # # write to file
 # # write.table(mset, file="/Users/ruthschmidt/Dropbox/Work/INRS/Data/NI_experiment/Output/VOC/mset_transposed.csv", sep="\t")
 # 
 # # load mapping file
-# treat = data.frame(fread("/Users/ruthschmidt/Dropbox/Work/INRS/Data/NI_experiment/Files/VOC/mapping_file.csv", header=T))
+# treat <- data.frame(fread("/Users/ruthschmidt/Dropbox/Work/INRS/Data/NI_experiment/Files/VOC/mapping_file.csv", header=T))
 # str(treat)
 # # convert Date to chr
-# treat$Date = as.character(treat$Date)
+# treat$Date <- as.character(treat$Date)
 # row.names(treat)=treat[,1]
-# treat = treat[order(treat$ID), ]
-# treat = transform(treat)
+# treat <- treat[order(treat$ID), ]
+# treat <- transform(treat)
 # head(treat)
-# #sanity check
+# # sanity check
 # row.names(mset)==paste(treat$ID, sep="")
 # 
 # # perform permanova on treatment, date and interaction
@@ -51,8 +51,8 @@ library(colorspace)
 # # check axes in JSON file 
 # library(plotly)
 # library(orca)
-# pca = read.table("/Users/ruthschmidt/Dropbox/Work/INRS/Data/NI_experiment/Files/VOC/pca.df.txt", sep="\t", header=T)
-# pca$Date = as.factor(pca$Date)
+# pca <- read.table("/Users/ruthschmidt/Dropbox/Work/INRS/Data/NI_experiment/Files/VOC/pca.df.txt", sep="\t", header=T)
+# pca$Date <- as.factor(pca$Date)
 # pcoa3d <- plot_ly(pca, x = ~x, y = ~y, z = ~z, color = ~Treatment, colors = "Dark2", mode = "markers", type = "scatter3d",
 #                   marker = list(symbol = ~char, symbols = "Date"))
 # pcoa3d <- pcoa3d %>% layout(scene = list(xaxis = list(title = 'PC1 (37.1%)'),
@@ -74,36 +74,36 @@ read_csv <- function(x){
 }
 
 # load files
-pca = read.table("/Users/ruthschmidt/Dropbox/Work/INRS/Data/NI_experiment/Files/VOC/pca.df.txt", sep="\t", header=T)
-pca$Date = as.factor(pca$Date)
+pca <- read.table("/Users/ruthschmidt/Dropbox/Work/INRS/Data/NI_experiment/Files/VOC/pca.df.txt", sep="\t", header=T)
+pca$Date <- as.factor(pca$Date)
 df <- read.csv("/Users/ruthschmidt/Dropbox/Work/Plotly/test_files/fc_voc.csv", sep=",", header=T)
 
 # heatmap for ANOVA 0.01 and identified compounds with AMDIS
-data.norm = data.frame(fread("/Users/ruthschmidt/Dropbox/Work/INRS/Data/NI_experiment/Files/VOC/data_normalized.csv", header=T))
+data.norm <- data.frame(fread("/Users/ruthschmidt/Dropbox/Work/INRS/Data/NI_experiment/Files/VOC/data_normalized.csv", header=T))
 # Get anova file 
-aov = data.frame(fread("/Users/ruthschmidt/Dropbox/Work/INRS/Data/NI_experiment/Files/VOC/anova_0.01_cpds_id_final.csv", sep=",", header=T))
+aov <- data.frame(fread("/Users/ruthschmidt/Dropbox/Work/INRS/Data/NI_experiment/Files/VOC/anova_0.01_cpds_id_final.csv", sep=",", header=T))
 # merge and subset data.norm based on aov 
-merge.df = merge(aov, data.norm, by ="ID")
-merge.df = merge.df[-c(1,3:11)]
+merge.df <- merge(aov, data.norm, by ="ID")
+merge.df <- merge.df[-c(1,3:11)]
 # # to export for fc analysis
-# merge.df = merge.df[-c(1,3:10)]
-# merge.df = merge.df %>% dplyr::rename(P= Interaction.adj.p.) %>% gather(key = "compound", value = "EFFECTSIZE", -c(1:2))
+# merge.df <- merge.df[-c(1,3:10)]
+# merge.df <- merge.df %>% dplyr::rename(P= Interaction.adj.p.) %>% gather(key = "compound", value = "EFFECTSIZE", -c(1:2))
 # fwrite(as.data.frame(merge.df), file="/Users/ruthschmidt/Dropbox/Work/Plotly/test_files/fc_voc.csv", row.names = T)
 
 # make compounds row names
-merge.df = data.frame(merge.df[,-1], row.names=merge.df[,1])
-merge.df = as.data.frame(t(merge.df))
+merge.df <- data.frame(merge.df[,-1], row.names=merge.df[,1])
+merge.df<-= as.data.frame(t(merge.df))
 
 # add treatment and date from mapping file 
-treat = data.frame(fread("/Users/ruthschmidt/Dropbox/Work/INRS/Data/NI_experiment/Files/VOC/mapping_file.tsv", sep="\t", header=T))
-treat = treat[order(treat$ID), ]
-treat = data.frame(treat[,-1], row.names=treat[,1])
+treat <- data.frame(fread("/Users/ruthschmidt/Dropbox/Work/INRS/Data/NI_experiment/Files/VOC/mapping_file.tsv", sep="\t", header=T))
+treat <- treat[order(treat$ID), ]
+treat <- data.frame(treat[,-1], row.names=treat[,1])
 # combine treat and merge.df and set factors 
-heat.df = cbind.data.frame(treat, merge.df)
-heat.df$Treatment = as.factor(heat.df$Treatment)
-heat.df$Date = as.factor(heat.df$Date)
+heat.df <- cbind.data.frame(treat, merge.df)
+heat.df$Treatment <- as.factor(heat.df$Treatment)
+heat.df$Date <- as.factor(heat.df$Date)
 # sort data based on treatment and date
-heat.df = heat.df[order(heat.df$Treatment, heat.df$Date), ]
+heat.df <- heat.df[order(heat.df$Treatment, heat.df$Date), ]
 # gather values to plot in boxplot
 box.df <- heat.df %>% tidyr::gather(Compound, value, -Treatment, -Date)
 
@@ -162,13 +162,6 @@ createHeatmap <- function(heat_file){
     colorbar(tickfont = list(size = 12), titlefont = list(size = 12), which = 2)
   # %>% layout(height=600,width=1300)
 }
-
-# scale_fill_gradient_fun = ggplot2::scale_fill_gradient2(
-#   low = "#A6CEE3", 
-#   high = "#1F78B4",
-#   midpoint = 0.5,
-#   limits = c(0, 1)
-# )
 
 t <- list(
   family = "Open Sans",
