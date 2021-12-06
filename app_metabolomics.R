@@ -14,53 +14,6 @@ library(vegan)
 library(RColorBrewer)
 library(colorspace)
 
-#################################### PERFORM ANALYSIS AND CREATE DATA FRAMES #############################
-
-# # load normalized data for VOC analysis 
-# library(data.table)
-# mset <- data.frame(fread("/Users/ruthschmidt/Dropbox/Work/INRS/Data/NI_experiment/Files/VOC/data_normalized.csv", header=T))
-# head(mset)
-# # convert values to log10 
-# row.names(mset)=mset[,1]
-# mset <- mset[,-1]
-# # transpose 
-# mset <- as.data.frame(t(mset))
-# mset <- mset[order(rownames(mset)),]
-# # # write to file
-# # write.table(mset, file="/Users/ruthschmidt/Dropbox/Work/INRS/Data/NI_experiment/Output/VOC/mset_transposed.csv", sep="\t")
-# 
-# # load mapping file
-# treat <- data.frame(fread("/Users/ruthschmidt/Dropbox/Work/INRS/Data/NI_experiment/Files/VOC/mapping_file.csv", header=T))
-# str(treat)
-# # convert Date to chr
-# treat$Date <- as.character(treat$Date)
-# row.names(treat)=treat[,1]
-# treat <- treat[order(treat$ID), ]
-# treat <- transform(treat)
-# head(treat)
-# # sanity check
-# row.names(mset)==paste(treat$ID, sep="")
-# 
-# # perform permanova on treatment, date and interaction
-# library(vegan)
-# perm=adonis(mset~treat$Treatment*treat$Date, method = "bray")
-# perm
-# write.table(perm$aov.tab, file="/Users/ruthschmidt/Dropbox/Work/INRS/Data/NI_experiment/Output/VOC/Permanova.txt", sep="\t")
-# 
-# # load pca df extracted from metaboanalyst to plot 3d pca
-# # check axes in JSON file 
-# library(plotly)
-# library(orca)
-# pca <- read.table("/Users/ruthschmidt/Dropbox/Work/INRS/Data/NI_experiment/Files/VOC/pca.df.txt", sep="\t", header=T)
-# pca$Date <- as.factor(pca$Date)
-# pcoa3d <- plot_ly(pca, x = ~x, y = ~y, z = ~z, color = ~Treatment, colors = "Dark2", mode = "markers", type = "scatter3d",
-#                   marker = list(symbol = ~char, symbols = "Date"))
-# pcoa3d <- pcoa3d %>% layout(scene = list(xaxis = list(title = 'PC1 (37.1%)'),
-#                                          yaxis = list(title = 'PC2 (13.3%)'),
-#                                          zaxis = list(title = 'PC3 (5.7%)')))
-# 
-# pcoa3d
-
 ####################################################################################################
 
 #################################### APP START $ LOAD FILES ########################################
@@ -85,10 +38,6 @@ aov <- data.frame(fread("/Users/ruthschmidt/Dropbox/Work/INRS/Data/NI_experiment
 # merge and subset data.norm based on aov 
 merge.df <- merge(aov, data.norm, by ="ID")
 merge.df <- merge.df[-c(1,3:11)]
-# # to export for fc analysis
-# merge.df <- merge.df[-c(1,3:10)]
-# merge.df <- merge.df %>% dplyr::rename(P= Interaction.adj.p.) %>% gather(key = "compound", value = "EFFECTSIZE", -c(1:2))
-# fwrite(as.data.frame(merge.df), file="/Users/ruthschmidt/Dropbox/Work/Plotly/test_files/fc_voc.csv", row.names = T)
 
 # make compounds row names
 merge.df <- data.frame(merge.df[,-1], row.names=merge.df[,1])
@@ -160,7 +109,6 @@ createHeatmap <- function(heat_file){
                                                              height=600) %>%
     colorbar(tickfont = list(size = 12), titlefont = list(size = 12), which = 1) %>%
     colorbar(tickfont = list(size = 12), titlefont = list(size = 12), which = 2)
-  # %>% layout(height=600,width=1300)
 }
 
 t <- list(
@@ -261,7 +209,6 @@ app$layout(
                 children = list(
                   dccTabs(
                     id="tabs", 
-                    # style = list(colors = list(primary = "white")),
                     value = "what-is",
                     children = list(
                       dccTab(
